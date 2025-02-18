@@ -1,6 +1,8 @@
 #ifndef SC_H
 #define SC_H
 
+#include <stdio.h>
+
 #define MEMORY_SIZE 128
 
 extern int memory[];
