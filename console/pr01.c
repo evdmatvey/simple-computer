@@ -1,6 +1,4 @@
 #include "console.h"
-#include <stdatomic.h>
-#include <stdio.h>
 
 void
 printMemoryData ()

@@ -13,12 +13,12 @@ EXEC = pr01
 all: $(EXEC) 
 
 $(EXEC): $(OBJ_SRC) $(OBJ_MAIN) 
- $(CC) $(CFLAGS) -o $@ $^ -L../mySimpleComputer -lmysimplecomputer
+	$(CC) $(CFLAGS) -o $@ $^ -L../mySimpleComputer -lmysimplecomputer
 
 %.o: %.c
- $(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
- rm -f $(OBJ) $(OBJ_MAIN) $(EXEC)
+	rm -f $(OBJ) $(OBJ_MAIN) $(EXEC)
 
 .PHONY: all clean
