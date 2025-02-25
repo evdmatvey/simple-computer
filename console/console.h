@@ -9,4 +9,4 @@ void printFlags (void);
 void printAccumulator (void);
 void printCounters (void);
 
-#endif 
+#endif

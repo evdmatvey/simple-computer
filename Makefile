@@ -1,17 +1,19 @@
-CC = gcc
-CFLAGS = -Wall -Wextra -Werror
+SIMPLE_COMPUTER = mySimpleComputer
+CONSOLE = console
+CONSOLE_PR01 = console/pr01
 
-all: console/test.a run
+all: build
+
+build:
+	@echo "Сборка проекта..."
+	@make -C $(SIMPLE_COMPUTER)
+	@make -C $(CONSOLE)
 
 run:
-	console/test.a
+	@echo "Запуск программы..."
+	@$(CONSOLE_PR01)
 
 clean:
-	rm console/test.o
-	rm console/test.a
+	@echo "Очистка проекта..."
+	@rm -f $(SIMPLE_COMPUTER)/libmysimplecomputer.a $(CONSOLE)/pr01
 
-console/test.a: console/test.o
-	$(CC) $(CFLAGS) -o $@ $<
-
-console/test.o: console/test.c
-	$(CC) -c $(CFLAGS) -o $@ $<
