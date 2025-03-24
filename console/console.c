@@ -84,14 +84,14 @@ checkTerm ()
       exit (EXIT_FAILURE);
     }
 
-  struct winsize w;
-  if (ioctl (fileno (stdout), TIOCGWINSZ, &w) != 0)
+  int cols, rows;
+  if (mt_getscreensize (&rows, &cols) != 0)
     {
       fprintf (stderr, "Ошибка: Не удалось получить размер экрана\n");
       exit (EXIT_FAILURE);
     }
 
-  if (w.ws_col < 80 || w.ws_row < 25)
+  if (cols < 110 || rows < 25)
     {
       fprintf (stderr, "Ошибка: Размер экрана недостаточен\n");
       exit (EXIT_FAILURE);
