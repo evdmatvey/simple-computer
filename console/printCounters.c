@@ -1,5 +1,4 @@
 #include "console.h"
-#include <stdio.h>
 
 void
 printCounters (void)
@@ -13,5 +12,14 @@ printCounters (void)
 
   char signChar = sign == 0 ? '+' : '-';
 
-  printf ("T: 00 IC: %c%02X%02X", signChar, command, operand);
+  mt_gotoXY (4, 67);
+  mt_setfgcolor (MT_RED);
+  mt_setbgcolor (MT_BLACK);
+  printf ("Счётчик комманд");
+  fflush (stdout);
+  mt_gotoXY (5, 65);
+  mt_setfgcolor (MT_WHITE);
+  mt_setbgcolor (MT_BLACK);
+  printf ("T: 00    IC: %c%02X%02X", signChar, command, operand);
+  fflush (stdout);
 }
