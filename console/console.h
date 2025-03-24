@@ -10,9 +10,10 @@
 #define CELL_WIDTH 6
 
 void printCell (int address, enum colors fg, enum colors bg);
-void printDecodedCommand (void);
+void printDecodedCommand ();
 void printFlags (void);
 void printAccumulator (void);
 void printCounters (void);
+void printTerm (int address, int input);
 
 #endif // !CONSOLE_H
