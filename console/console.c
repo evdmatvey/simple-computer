@@ -1,71 +1,109 @@
 #include "console.h"
 
-#define HISTORY_SIZE 4
-#define TERM_START_ROW 20
-#define TERM_START_COL 70
-
-typedef struct BufferValue
-{
-  int address;
-  int value;
-  int type;
-} BufferValue;
-
-static BufferValue buffer[HISTORY_SIZE];
-static int head = 0;
-static int tail = 0;
-static int count = 0;
-
 void
-addElement (BufferValue value)
+printMemoryData ()
 {
-  if (count == HISTORY_SIZE)
-    {
-      head = (head + 1) % HISTORY_SIZE;
-      count--;
-    }
-
-  buffer[tail] = value;
-  tail = (tail + 1) % HISTORY_SIZE;
-  count++;
-}
-
-void
-printBuffer ()
-{
-  mt_gotoXY (19, 71);
-  mt_setbgcolor (MT_WHITE);
-  mt_setfgcolor (MT_GREEN);
-  printf ("IN--OUT");
+  mt_gotoXY (1, 25);
+  mt_setfgcolor (MT_RED);
+  mt_setbgcolor (MT_BLACK);
+  printf ("Оперативная память");
   fflush (stdout);
-  int current = head;
-  for (int i = 0; i < count; i++)
-    {
-      BufferValue value = buffer[current];
-      int sign = (value.value & SIGN_MASK) >> 14;
-      int command = (value.value & COMMAND_MASK) >> 7;
-      int operand = value.value & OPERAND_MASK;
-
-      mt_gotoXY (TERM_START_ROW + i, TERM_START_COL);
-      mt_setbgcolor (MT_BLACK);
-      mt_setfgcolor (MT_WHITE);
-      printf ("%03d%c %c%02X%02X", value.address, value.type == 0 ? '>' : '<',
-              sign == 0 ? '+' : '-', command, operand);
-      fflush (stdout);
-      current = (current + 1) % HISTORY_SIZE;
-    }
-}
-
-void
-printTerm (int address, int input)
-{
-  int memValue;
-  if (sc_memoryGet (address, &memValue) == -1)
+  int current_cell;
+  if (sc_icounterGet (&current_cell) == -1)
     {
       return;
+    };
+
+  for (int i = 0; i < 128; i++)
+    {
+      if (i == current_cell)
+        {
+          printCell (i, MT_BLACK, MT_WHITE);
+        }
+      else
+        {
+          printCell (i, MT_WHITE, MT_BLACK);
+        }
+    }
+  printf ("\n");
+}
+
+void
+init ()
+{
+  sc_memoryInit ();
+  sc_accumulatorInit ();
+  sc_icounterInit ();
+  sc_regInit ();
+
+  sc_memorySet (0, 0x3941);
+  sc_memorySet (1, 0x3923);
+  sc_memorySet (2, 0x3912);
+  sc_memorySet (3, 0x2312);
+  sc_memorySet (4, 0x1355);
+  sc_memorySet (5, 0x1312);
+  sc_memorySet (6, 0x1210);
+  sc_memorySet (10, 0x2323);
+  sc_memorySet (29, 0x3912);
+
+  sc_icounterSet (10);
+  sc_accumulatorSet (39);
+  sc_regSet (OVERFLOW_MASK, 1);
+  sc_regSet (DIVISION_BY_ZERO_MASK, 1);
+  sc_regSet (INVALID_COMMAND_MASK, 1);
+}
+
+void
+startTerm ()
+{
+  mt_clrscr ();
+  printMemoryData ();
+  printAccumulator ();
+  printCounters ();
+  printFlags ();
+  printDecodedCommand ();
+
+  printTerm (0, 0);
+  printTerm (1, 0);
+  printTerm (2, 0);
+  printTerm (3, 0);
+  printTerm (4, 0);
+  printTerm (5, 0);
+  printTerm (6, 0);
+
+  mt_gotoXY (25, 1);
+  mt_setdefaultcolor ();
+}
+
+void
+checkTerm ()
+{
+  if (!isatty (fileno (stdout)))
+    {
+      fprintf (stderr, "Ошибка: Приложение требует терминал\n");
+      exit (EXIT_FAILURE);
     }
 
-  BufferValue newValue = { address, memValue, input };
-  addElement (newValue);
-  printBuffer ();
+  struct winsize w;
+  if (ioctl (fileno (stdout), TIOCGWINSZ, &w) != 0)
+    {
+      fprintf (stderr, "Ошибка: Не удалось получить размер экрана\n");
+      exit (EXIT_FAILURE);
+    }
+
+  if (w.ws_col < 80 || w.ws_row < 25)
+    {
+      fprintf (stderr, "Ошибка: Размер экрана недостаточен\n");
+      exit (EXIT_FAILURE);
+    }
+}
+
+int
+main ()
+{
+  checkTerm ();
+  init ();
+  startTerm ();
+
+  return 0;
 }
