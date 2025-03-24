@@ -15,5 +15,5 @@ printCell (int address)
 
   char signSymbol = sign == 0 ? '+' : '-';
 
-  printf ("%c%02X%02X", signSymbol, command, operand);
+  printf ("%d", value);
 }
