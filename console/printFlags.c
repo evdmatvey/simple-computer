@@ -18,6 +18,15 @@ printFlags (void)
   char ignoreClock = ignoreClockFlag == 0 ? '_' : 'T';
   char invalidCommand = invalidCommandFlag == 0 ? '_' : 'E';
 
-  printf ("%c %c %c %c %c", overflow, divisionByZero, memory, ignoreClock,
+  mt_gotoXY (1, 88);
+  mt_setfgcolor (MT_RED);
+  mt_setbgcolor (MT_BLACK);
+  printf ("Регистр флагов");
+  fflush (stdout);
+  mt_gotoXY (2, 88);
+  mt_setfgcolor (MT_WHITE);
+  mt_setbgcolor (MT_BLACK);
+  printf ("%c  %c  %c  %c  %c", overflow, divisionByZero, memory, ignoreClock,
           invalidCommand);
+  fflush (stdout);
 }
