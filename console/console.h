@@ -1,6 +1,7 @@
 #ifndef CONSOLE_H
 
 #include "../include/mySimpleComputer.h"
+#include "../include/myTerm.h"
 #include <stdio.h>
 
 void printCell (int address);
