@@ -17,6 +17,7 @@ printCell (int address, enum colors fg, enum colors bg)
   int sign = (value & SIGN_MASK) >> 14;
   int command = (value & COMMAND_MASK) >> 7;
   int operand = value & OPERAND_MASK;
-  printf ("%c%02X%02X", (sign == 0) ? '+' : '-', command, operand);
+  char signChar = (sign == 0) ? '+' : '-';
+  printf ("%c%02X%02X", signChar, command, operand);
   fflush (stdout);
 }

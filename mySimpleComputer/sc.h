@@ -4,6 +4,8 @@
 #include <stdio.h>
 
 #define MEMORY_SIZE 128
+#define SIGN_MASK 0x8000
+#define VALUE_MASK 0x7FFF
 
 #define MAX_15_BIT_POSITIVE (1 << 14) - 1    // 32767
 #define MAX_15_BIT_NEGATIVE -((1 << 14) - 1) // -32767
@@ -14,7 +16,7 @@
 #define IGNORE_CLOCK_MASK (1 << 3)     // 01000
 #define INVALID_COMMAND_MASK (1 << 4)  // 10000
 
-#define SIGN_MASK 0x4000
+// #define SIGN_MASK 0x4000
 #define COMMAND_MASK 0x3F80
 #define OPERAND_MASK 0x007F
 

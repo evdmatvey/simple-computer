@@ -44,7 +44,7 @@ sc_memorySet (int address, int value)
     }
   else
     {
-      memory[address] = (1 << 15) | ((-value) & 0x3FFF);
+      memory[address] = ((-value) & 0x3FFF) | 0x4000;
     }
   return 0;
 }

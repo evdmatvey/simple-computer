@@ -36,8 +36,6 @@ init ()
   sc_icounterInit ();
   sc_regInit ();
 
-  sc_memorySet (0, 0x3941);
-  sc_memorySet (1, 0x3923);
   sc_memorySet (2, 0x3912);
   sc_memorySet (3, 0x2312);
   sc_memorySet (4, 0x1355);
