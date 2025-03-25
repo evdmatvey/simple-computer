@@ -35,11 +35,17 @@ sc_memorySet (int address, int value)
   if (address < 0 || address >= MEMORY_SIZE)
     return -1;
 
-  if (value < 0 || value > MAX_15_BIT_POSITIVE)
+  if (value < -16384 || value > 16383)
     return -1;
 
-  memory[address] = value;
-
+  if (value >= 0)
+    {
+      memory[address] = value;
+    }
+  else
+    {
+      memory[address] = (1 << 15) | ((-value) & 0x3FFF);
+    }
   return 0;
 }
 

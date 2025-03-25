@@ -5,8 +5,8 @@
 
 #define MEMORY_SIZE 128
 
-#define MAX_15_BIT_POSITIVE (1 << 15) - 1    // 32767
-#define MAX_15_BIT_NEGATIVE -((1 << 15) - 1) // -32767
+#define MAX_15_BIT_POSITIVE (1 << 14) - 1    // 32767
+#define MAX_15_BIT_NEGATIVE -((1 << 14) - 1) // -32767
 
 #define OVERFLOW_MASK (1 << 0)         // 00001
 #define DIVISION_BY_ZERO_MASK (1 << 1) // 00010
