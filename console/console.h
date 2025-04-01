@@ -15,5 +15,6 @@ void printFlags (void);
 void printAccumulator (void);
 void printCounters (void);
 void printTerm (int address, int input);
+void printCommand (void);
 
 #endif // !CONSOLE_H
