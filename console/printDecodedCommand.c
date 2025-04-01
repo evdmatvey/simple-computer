@@ -40,20 +40,20 @@ printDecodedCommand ()
 
       if (abs_value == -1)
         {
-          printf ("dec: -1 | oct: -1 | hex: -1 | bin: ");
+          printf ("dec: -1");
         }
       else
         {
-          printf ("dec: %d | oct: -%o | hex: -%X | bin: ", abs_value,
-                  -abs_value, -abs_value);
+          printf ("dec: %d", abs_value);
         }
     }
   else
     {
       abs_value = magnitude;
-      printf ("dec: +%d | oct: +%o | hex: +%X | bin: ", abs_value, abs_value,
-              abs_value);
+      printf ("dec: +%d", abs_value);
     }
+
+  printf (" | oct: %05o | hex: %04X | bin:", value, value);
 
   printBinary (value);
   printf ("\n");

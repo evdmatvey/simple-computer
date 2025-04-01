@@ -44,13 +44,12 @@ init ()
   sc_memorySet (10, 0x2323);
   sc_memorySet (29, 0x3912);
   sc_memorySet (0, 16383);
-  sc_memorySet (1, 1);
+  sc_memorySet (1, -2);
 
-  sc_icounterSet (0);
+  sc_icounterSet (1);
   sc_accumulatorSet (39);
-  sc_regSet (OVERFLOW_MASK, 1);
-  sc_regSet (DIVISION_BY_ZERO_MASK, 1);
   sc_regSet (INVALID_COMMAND_MASK, 1);
+  sc_regSet (IGNORE_CLOCK_MASK, 1);
 }
 
 void
