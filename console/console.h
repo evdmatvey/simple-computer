@@ -1,0 +1,21 @@
+#ifndef CONSOLE_H
+
+#include "../include/myBigChars.h"
+#include "../include/mySimpleComputer.h"
+#include "../include/myTerm.h"
+#include <stdio.h>
+
+#define MEM_START_ROW 2
+#define MEM_START_COL 3
+#define COLS_PER_ROW 10
+#define CELL_WIDTH 6
+
+void printCell (int address, enum colors fg, enum colors bg);
+void printDecodedCommand ();
+void printFlags (void);
+void printAccumulator (void);
+void printCounters (void);
+void printTerm (int address, int input);
+void printCommand (void);
+
+#endif // !CONSOLE_H
