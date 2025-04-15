@@ -17,11 +17,8 @@ printCommand (void)
   int operand = value & 0x7F;
   int res = sc_commandValidate (command);
 
-  mt_gotoXY (4, 91);
-  mt_setfgcolor (MT_RED);
-  mt_setbgcolor (MT_BLACK);
-  printf ("Комманда");
-  fflush (stdout);
+  bc_box (4, 85, 1, 20, MT_WHITE, MT_BLACK, " Команда ", MT_RED, MT_BLACK);
+
   mt_gotoXY (5, 88);
   mt_setfgcolor (MT_WHITE);
   mt_setbgcolor (MT_BLACK);
