@@ -12,11 +12,8 @@ printCounters (void)
 
   char signChar = sign == 0 ? '+' : '-';
 
-  mt_gotoXY (4, 67);
-  mt_setfgcolor (MT_RED);
-  mt_setbgcolor (MT_BLACK);
-  printf ("Счётчик комманд");
-  fflush (stdout);
+  bc_box (4, 63, 1, 20, MT_WHITE, MT_BLACK, " Счётчик комманд ", MT_RED,
+          MT_BLACK);
   mt_gotoXY (5, 65);
   mt_setfgcolor (MT_WHITE);
   mt_setbgcolor (MT_BLACK);

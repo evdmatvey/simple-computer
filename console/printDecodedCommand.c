@@ -20,12 +20,6 @@ printDecodedCommand ()
   if (sc_memoryGet (addr, &value) == -1)
     return;
 
-  mt_gotoXY (16, 15);
-  mt_setfgcolor (MT_RED);
-  mt_setbgcolor (MT_WHITE);
-  printf ("Редактируемая ячейка (формат)");
-  fflush (stdout);
-
   mt_gotoXY (17, 3);
   mt_setfgcolor (MT_WHITE);
   mt_setbgcolor (MT_BLACK);
@@ -58,4 +52,7 @@ printDecodedCommand ()
   printBinary (value);
   printf ("\n");
   fflush (stdout);
+
+  bc_box (16, 1, 1, 60, MT_WHITE, MT_BLACK, " Редактируемая ячейчка (формат) ",
+          MT_RED, MT_WHITE);
 }

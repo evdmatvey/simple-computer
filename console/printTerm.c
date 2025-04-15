@@ -33,11 +33,8 @@ addElement (BufferValue value)
 void
 printBuffer ()
 {
-  mt_gotoXY (19, 71);
-  mt_setbgcolor (MT_WHITE);
-  mt_setfgcolor (MT_GREEN);
-  printf ("IN--OUT");
-  fflush (stdout);
+  bc_box (19, 69, 4, 10, MT_WHITE, MT_BLACK, " IN--OUT ", MT_GREEN, MT_WHITE);
+
   int current = head;
   for (int i = 0; i < count; i++)
     {
