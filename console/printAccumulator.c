@@ -12,11 +12,8 @@ printAccumulator (void)
 
   char signChar = sign == 0 ? '+' : '-';
 
-  mt_gotoXY (1, 69);
-  mt_setfgcolor (MT_RED);
-  mt_setbgcolor (MT_BLACK);
-  printf ("Аккумулятор");
-  fflush (stdout);
+  bc_box (1, 63, 1, 20, MT_WHITE, MT_BLACK, " Аккумулятор ", MT_RED, MT_BLACK);
+
   mt_gotoXY (2, 65);
   mt_setfgcolor (MT_WHITE);
   mt_setbgcolor (MT_BLACK);
