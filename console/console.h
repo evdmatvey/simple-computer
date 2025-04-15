@@ -1,5 +1,6 @@
 #ifndef CONSOLE_H
 
+#include "../include/myBigChars.h"
 #include "../include/mySimpleComputer.h"
 #include "../include/myTerm.h"
 #include <stdio.h>
