@@ -44,7 +44,7 @@ init ()
   sc_memorySet (0, 16383);
   sc_memorySet (1, -2);
 
-  sc_icounterSet (1);
+  sc_icounterSet (0);
   sc_accumulatorSet (39);
   sc_regSet (INVALID_COMMAND_MASK, 1);
   sc_regSet (IGNORE_CLOCK_MASK, 1);
@@ -124,7 +124,7 @@ drawingBigChars ()
     }
   else
     {
-      bc_printbigchar (bc_symbols[17], row, startColumn, MT_GREEN, MT_BLACK);
+      bc_printbigchar (bc_symbols[16], row, startColumn, MT_GREEN, MT_BLACK);
     }
 
   for (int i = 0; i < 2; i++)
