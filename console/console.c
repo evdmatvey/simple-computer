@@ -3,11 +3,9 @@
 void
 printMemoryData ()
 {
-  mt_gotoXY (1, 25);
-  mt_setfgcolor (MT_RED);
-  mt_setbgcolor (MT_BLACK);
-  printf ("Оперативная память");
-  fflush (stdout);
+  bc_box (1, 1, 13, 60, MT_WHITE, MT_BLACK, " Оперативная память ", MT_RED,
+          MT_BLACK);
+
   int current_cell;
   if (sc_icounterGet (&current_cell) == -1)
     {
@@ -52,11 +50,108 @@ init ()
   sc_regSet (IGNORE_CLOCK_MASK, 1);
 }
 
+int
+decodeTwosComplement (int value, int *decoded_value)
+{
+  int is_negative = (value >> 15) & 1;
+
+  if (is_negative)
+    {
+      int inverted = ~value & 0xFFFF; // Маска для 15 бит
+      *decoded_value = -(inverted + 1);
+    }
+  else
+    {
+      *decoded_value = value & 0xFFFF; // Маска для битов 0–13
+    }
+
+  return is_negative;
+}
+
+int
+drawingBigChars ()
+{
+  int addr;
+  sc_icounterGet (&addr);
+
+  int value;
+  sc_memoryGet (addr, &value);
+
+  int sign = (value >> 14) & 1;
+  int command = (value >> 7) & 0x7F;
+  int operand = value & 0x7F;
+
+  char hex_1[3];
+  sprintf (hex_1, "%02X", command);
+
+  int hex_array_1[2];
+
+  for (int i = 0; i < 3; i++)
+    {
+      if (hex_1[i] >= '0' && hex_1[i] <= '9')
+        {
+          hex_array_1[i] = hex_1[i] - '0';
+        }
+      else if (hex_1[i] >= 'A' && hex_1[i] <= 'F')
+        {
+          hex_array_1[i] = hex_1[i] - 'A' + 10;
+        }
+    }
+
+  char hex_2[3];
+  sprintf (hex_2, "%02X", operand);
+
+  int hex_array_2[2];
+
+  for (int i = 0; i < 3; i++)
+    {
+      if (hex_2[i] >= '0' && hex_2[i] <= '9')
+        {
+          hex_array_2[i] = hex_2[i] - '0';
+        }
+      else if (hex_2[i] >= 'A' && hex_2[i] <= 'F')
+        {
+          hex_array_2[i] = hex_2[i] - 'A' + 10;
+        }
+    }
+
+  int row = 8;
+  int startColumn = 64;
+
+  if (sign)
+    {
+      bc_printbigchar (bc_symbols[17], row, startColumn, MT_GREEN, MT_BLACK);
+    }
+  else
+    {
+      bc_printbigchar (bc_symbols[17], row, startColumn, MT_GREEN, MT_BLACK);
+    }
+
+  for (int i = 0; i < 2; i++)
+    {
+      bc_printbigchar (bc_symbols[hex_array_1[i]], row,
+                       startColumn + 8 * (i + 1), MT_GREEN, MT_BLACK);
+    }
+
+  for (int i = 0; i < 2; i++)
+    {
+      bc_printbigchar (bc_symbols[hex_array_2[i]], row,
+                       startColumn + 16 + 8 * (i + 1), MT_GREEN, MT_BLACK);
+    }
+
+  bc_box (7, 63, 8, 42, MT_WHITE, MT_BLACK,
+          " Редактируемая ячейка (увеличенно) ", MT_RED, MT_BLACK);
+
+  return 0;
+}
+
 void
 startTerm ()
 {
   mt_clrscr ();
   printMemoryData ();
+
+  drawingBigChars ();
   printAccumulator ();
   printCounters ();
   printFlags ();
