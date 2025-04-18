@@ -8,6 +8,8 @@ sc_memoryInit ()
       memory[i] = 0;
     }
 
+  sc_regSet (INVALID_COMMAND_MASK, 0);
+
   return 0;
 }
 
@@ -47,6 +49,15 @@ sc_memorySet (int address, int value)
       int positive = -value;
       int inverted = (~positive) & 0x3FFF;
       memory[address] = (1 << 14) | (inverted + 1);
+    }
+
+  int command, sign, opperand;
+  sc_commandDecode (value, &sign, &command, &opperand);
+  int isValid = sc_commandValidate (command);
+
+  if (isValid == -1)
+    {
+      sc_regSet (INVALID_COMMAND_MASK, 1);
     }
   return 0;
 }

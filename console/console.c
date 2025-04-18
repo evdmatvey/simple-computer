@@ -44,28 +44,11 @@ init ()
   sc_memorySet (0, 16383);
   sc_memorySet (1, -2);
 
-  sc_icounterSet (0);
+  sc_memoryInit ();
+
+  sc_icounterSet (6);
   sc_accumulatorSet (39);
-  sc_regSet (INVALID_COMMAND_MASK, 1);
   sc_regSet (IGNORE_CLOCK_MASK, 1);
-}
-
-int
-decodeTwosComplement (int value, int *decoded_value)
-{
-  int is_negative = (value >> 15) & 1;
-
-  if (is_negative)
-    {
-      int inverted = ~value & 0xFFFF; // Маска для 15 бит
-      *decoded_value = -(inverted + 1);
-    }
-  else
-    {
-      *decoded_value = value & 0xFFFF; // Маска для битов 0–13
-    }
-
-  return is_negative;
 }
 
 int
