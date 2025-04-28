@@ -24,26 +24,15 @@ printDecodedCommand ()
   mt_setfgcolor (MT_WHITE);
   mt_setbgcolor (MT_BLACK);
 
-  int sign = (value >> 14) & 1;
-  int magnitude = value & 0x3FFF;
-  int abs_value;
+  int abs_value = sc_getDecValueOfMemoryData (value);
 
-  if (sign)
+  if (abs_value < 0)
     {
-      abs_value = -((~(value & 0x3FFF) + 1) & 0x3FFF);
 
-      if (abs_value == -1)
-        {
-          printf ("dec: -1");
-        }
-      else
-        {
-          printf ("dec: %d", abs_value);
-        }
+      printf ("dec: %d", abs_value);
     }
   else
     {
-      abs_value = magnitude;
       printf ("dec: +%d", abs_value);
     }
 

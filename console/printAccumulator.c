@@ -6,9 +6,8 @@ printAccumulator (void)
   int accumulator;
   sc_accumulatorGet (&accumulator);
 
-  int sign = (accumulator & SIGN_MASK) >> 14;
-  int command = (accumulator & COMMAND_MASK) >> 7;
-  int operand = accumulator & OPERAND_MASK;
+  int sign, command, operand;
+  sc_commandDecode (accumulator, &sign, &command, &operand);
 
   char signChar = sign == 0 ? '+' : '-';
 

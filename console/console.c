@@ -1,4 +1,5 @@
 #include "console.h"
+#include <stdio.h>
 
 void
 printMemoryData ()
@@ -34,7 +35,7 @@ init ()
   sc_icounterInit ();
   sc_regInit ();
 
-  sc_memorySet (2, 0x3912);
+  sc_memorySet (9, 0x1010);
   sc_memorySet (3, 0x2312);
   sc_memorySet (4, 0x1355);
   sc_memorySet (5, 0x1312);
@@ -44,28 +45,9 @@ init ()
   sc_memorySet (0, 16383);
   sc_memorySet (1, -2);
 
-  sc_icounterSet (1);
-  sc_accumulatorSet (39);
-  sc_regSet (INVALID_COMMAND_MASK, 1);
+  sc_icounterSet (0);
+  sc_accumulatorSet (0);
   sc_regSet (IGNORE_CLOCK_MASK, 1);
-}
-
-int
-decodeTwosComplement (int value, int *decoded_value)
-{
-  int is_negative = (value >> 15) & 1;
-
-  if (is_negative)
-    {
-      int inverted = ~value & 0xFFFF; // Маска для 15 бит
-      *decoded_value = -(inverted + 1);
-    }
-  else
-    {
-      *decoded_value = value & 0xFFFF; // Маска для битов 0–13
-    }
-
-  return is_negative;
 }
 
 int
@@ -124,7 +106,7 @@ drawingBigChars ()
     }
   else
     {
-      bc_printbigchar (bc_symbols[17], row, startColumn, MT_GREEN, MT_BLACK);
+      bc_printbigchar (bc_symbols[16], row, startColumn, MT_GREEN, MT_BLACK);
     }
 
   for (int i = 0; i < 2; i++)
@@ -157,14 +139,14 @@ startTerm ()
   printFlags ();
   printDecodedCommand ();
   printCommand ();
-
-  printTerm (0, 0);
-  printTerm (1, 0);
-  printTerm (2, 0);
-  printTerm (3, 0);
-  printTerm (4, 0);
-  printTerm (5, 0);
-  printTerm (6, 0);
+  printKeysHelper ();
+  printTerm (0, 1);
+  printTerm (1, 1);
+  printTerm (2, 1);
+  printTerm (3, 1);
+  printTerm (4, 1);
+  printTerm (5, 1);
+  printTerm (6, 1);
 
   mt_gotoXY (25, 1);
   mt_setdefaultcolor ();
@@ -194,11 +176,194 @@ checkTerm ()
 }
 
 int
+loop ()
+{
+
+  rk_mytermsave ();
+  rk_mytermregime (1, 1, 0, 0, 0);
+  mt_setcursorvisible (0);
+
+  enum keys key;
+  int mode = MODE_MEMORY;
+
+  while (1)
+    {
+      rk_readkey (&key);
+      if (key == KEY_ESC)
+        {
+          break;
+        }
+
+      if (mode == MODE_MEMORY && key == KEY_ENTER)
+        {
+          int counter;
+          sc_icounterGet (&counter);
+
+          int row = MEM_START_ROW + (counter / COLS_PER_ROW);
+          int col = MEM_START_COL + (counter % COLS_PER_ROW) * CELL_WIDTH;
+
+          int newValue = editInPlace (col, row);
+          if (newValue != -1)
+            sc_memorySet (counter, newValue);
+          startTerm ();
+        }
+
+      if (key == KEY_i || key == KEY_I)
+        {
+          sc_memoryInit ();
+          sc_accumulatorInit ();
+          sc_icounterInit ();
+          startTerm ();
+        }
+
+      int icounter;
+      sc_icounterGet (&icounter);
+
+      if (key == KEY_UP && mode == MODE_MEMORY)
+        {
+          int newIcounter
+              = icounter - 10 < 0 ? 127 - (7 - icounter % 10) : icounter - 10;
+          sc_icounterSet (newIcounter);
+          startTerm ();
+        }
+
+      if (key == KEY_DOWN && mode == MODE_MEMORY)
+        {
+          int newIcounter
+              = icounter + 10 >= 128 ? icounter % 10 : icounter + 10;
+          sc_icounterSet (newIcounter);
+          startTerm ();
+        }
+
+      if (key == KEY_LEFT && mode == MODE_MEMORY)
+        {
+          int newIcounter = icounter - 1 < 0 ? 127 : icounter - 1;
+          sc_icounterSet (newIcounter);
+          startTerm ();
+        }
+
+      if (key == KEY_RIGHT && mode == MODE_MEMORY)
+        {
+          int newIcounter = icounter + 1 >= 128 ? 0 : icounter + 1;
+          sc_icounterSet (newIcounter);
+          startTerm ();
+        }
+
+      if (key == KEY_F5)
+        {
+          if (mode == MODE_ACC)
+            {
+              mode = MODE_MEMORY;
+            }
+          else
+            {
+              mode = MODE_ACC;
+              int newAcc = editInPlace (69, 2);
+              sc_accumulatorSet (newAcc);
+              startTerm ();
+            }
+        }
+
+      if (key == KEY_F6)
+        {
+          if (mode == MODE_COUNTER)
+            {
+              mode = MODE_MEMORY;
+            }
+          else
+            {
+              mode = MODE_COUNTER;
+              int newCounter = editInPlace (78, 5);
+              sc_icounterSet (newCounter);
+              startTerm ();
+            }
+        }
+
+      if (key == KEY_s)
+        {
+          mt_gotoXY (20, 10);
+          mt_setbgcolor (MT_BLACK);
+          mt_setfgcolor (MT_WHITE);
+          char filename[128];
+
+          rk_mytermregime (0, 0, 0, 1, 1);
+
+          printf ("Введите имя файла для сохранения: ");
+          if (fgets (filename, sizeof (filename), stdin) != NULL)
+            {
+              size_t len = strlen (filename);
+              if (len > 0 && filename[len - 1] == '\n')
+                {
+                  filename[len - 1] = '\0';
+                }
+
+              if (sc_memorySave (filename) == 0)
+                {
+                  printf ("Данные успешно сохранены в файл '%s'.\n", filename);
+                }
+              else
+                {
+                  printf ("Ошибка при сохранении в файл '%s'.\n", filename);
+                }
+            }
+          else
+            {
+              printf ("Ошибка ввода имени файла.\n");
+            }
+
+          rk_mytermregime (1, 1, 0, 0, 0);
+        }
+
+      if (key == KEY_l)
+        {
+          mt_gotoXY (20, 10);
+          mt_setbgcolor (MT_BLACK);
+          mt_setfgcolor (MT_WHITE);
+          char filename[128];
+
+          rk_mytermregime (0, 0, 0, 1, 1);
+
+          printf ("Введите имя файла для сохранения: ");
+          if (fgets (filename, sizeof (filename), stdin) != NULL)
+            {
+              size_t len = strlen (filename);
+              if (len > 0 && filename[len - 1] == '\n')
+                {
+                  filename[len - 1] = '\0';
+                }
+
+              if (sc_memoryLoad (filename) == 0)
+                {
+                  printf ("Данные успешно загруженны из файла '%s'.\n",
+                          filename);
+                  startTerm ();
+                }
+              else
+                {
+                  printf ("Ошибка при загрузке из файла '%s'.\n", filename);
+                }
+            }
+          else
+            {
+              printf ("Ошибка ввода имени файла.\n");
+            }
+
+          rk_mytermregime (1, 1, 0, 0, 0);
+        }
+    }
+
+  rk_mytermrestore ();
+
+  return 0;
+}
+
+int
 main ()
 {
   checkTerm ();
   init ();
   startTerm ();
+  loop ();
 
   return 0;
 }
