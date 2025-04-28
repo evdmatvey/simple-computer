@@ -1,5 +1,25 @@
 #include "sc.h"
 
+void
+validate_memory ()
+{
+  int res = 0;
+
+  for (int i = 0; i < MEMORY_SIZE; i++)
+    {
+      int value = memory[i];
+      int sign, command, operand;
+      res = sc_commandDecode (value, &sign, &command, &operand);
+
+      if (res == -1)
+        {
+          break;
+        }
+    }
+
+  sc_regSet (INVALID_COMMAND_MASK, res == 0 ? 0 : 1);
+}
+
 int
 sc_memoryInit ()
 {
@@ -51,14 +71,8 @@ sc_memorySet (int address, int value)
       memory[address] = (1 << 14) | (inverted + 1);
     }
 
-  int command, sign, opperand;
-  sc_commandDecode (value, &sign, &command, &opperand);
-  int isValid = sc_commandValidate (command);
+  validate_memory ();
 
-  if (isValid == -1)
-    {
-      sc_regSet (INVALID_COMMAND_MASK, 1);
-    }
   return 0;
 }
 
@@ -105,5 +119,7 @@ sc_memoryLoad (char *filename)
     }
 
   fclose (file);
+
+  validate_memory ();
   return 0;
 }
