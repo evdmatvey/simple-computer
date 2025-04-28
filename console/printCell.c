@@ -14,9 +14,9 @@ printCell (int address, enum colors fg, enum colors bg)
   mt_setfgcolor (fg);
   mt_setbgcolor (bg);
 
-  int sign = (value >> 14) & 1;
-  int command = (value >> 7) & 0x7F;
-  int operand = value & 0x7F;
+  int sign;
+  int command, operand;
+  sc_commandDecode (value, &sign, &command, &operand);
 
   printf ("%c%02X%02X", sign ? '-' : '+', command, operand);
   fflush (stdout);

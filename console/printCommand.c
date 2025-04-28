@@ -12,10 +12,8 @@ printCommand (void)
   if (sc_memoryGet (addr, &value) == -1)
     return;
 
-  int sign = (value >> 14) & 1;
-  int command = (value >> 7) & 0x7F;
-  int operand = value & 0x7F;
-  int res = sc_commandValidate (command);
+  int sign, command, operand;
+  int res = sc_commandDecode (value, &sign, &command, &operand);
 
   bc_box (4, 85, 1, 20, MT_WHITE, MT_BLACK, " Команда ", MT_RED, MT_BLACK);
 
