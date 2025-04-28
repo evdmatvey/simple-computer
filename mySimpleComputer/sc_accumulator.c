@@ -24,12 +24,16 @@ sc_accumulatorGet (int *value)
 int
 sc_accumulatorSet (int value)
 {
-  if (value >= MAX_15_BIT_POSITIVE || value < MAX_15_BIT_NEGATIVE)
+  if (value >= 0)
     {
-      return -1;
+      accumulator = value;
     }
-
-  accumulator = value;
+  else
+    {
+      int positive = -value;
+      int inverted = (~positive) & 0x3FFF;
+      accumulator = (1 << 14) | (inverted + 1);
+    }
 
   return 0;
 }

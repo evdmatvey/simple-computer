@@ -3,19 +3,14 @@
 int
 sc_commandDecode (int value, int *sign, int *command, int *operand)
 {
-  if ((value & ~0xFFFF) != 0)
-    {
-      return -1;
-    }
-
   if (sign == NULL || command == NULL || operand == NULL)
     {
       return -1;
     }
 
-  *sign = (value & SIGN_MASK) >> 14;
-  *command = (value & COMMAND_MASK) >> 7;
-  *operand = value & OPERAND_MASK;
+  *sign = (value >> 14) & 1;
+  *command = (value >> 7) & 0x7F;
+  *operand = value & 0x7F;
 
   if (sc_commandValidate (*command) == -1)
     {
@@ -100,4 +95,24 @@ sc_commandValidate (int command)
     default:
       return -1;
     }
+}
+
+int
+sc_getDecValueOfMemoryData (const int value)
+{
+  int result;
+  int sign = (value >> 14) & 1;
+  int magnitude = value & 0x3FFF;
+  int abs_value;
+
+  if (sign)
+    {
+      abs_value = -((~(value & 0x3FFF) + 1) & 0x3FFF);
+    }
+  else
+    {
+      abs_value = magnitude;
+    }
+
+  return abs_value;
 }
